@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东汉霸业：群雄逐鹿</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', 'STHeiti', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, #1a1f25, #0c343d);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            grid-gap: 20px;
+        }
+        
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #3a506b;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: #f0c050;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(240, 192, 80, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #a0c0d0;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-gap: 20px;
+        }
+        
+        .panel {
+            background: rgba(20, 30, 48, 0.85);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #2a3a5a;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .status-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-gap: 15px;
+        }
+        
+        .status-item {
+            background: rgba(30, 45, 70, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #3a5570;
+        }
+        
+        .status-value {
+            font-size: 1.8rem;
+            color: #f0c050;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .status-label {
+            font-size: 0.9rem;
+            color: #a0c0d0;
+        }
+        
+        .territory-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .territory-card {
+            background: rgba(25, 40, 65, 0.7);
+            border-radius: 6px;
+            padding: 10px;
+            flex: 1;
+            min-width: 120px;
+            border: 1px solid #345070;
+        }
+        
+        .territory-name {
+            color: #70a0c0;
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #3a5570;
+            padding-bottom: 5px;
+        }
+        
+        .city-item {
+            font-size: 0.9rem;
+            padding: 3px 0;
+            border-bottom: 1px dotted #3a506b;
+        }
+        
+        .actions-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-gap: 15px;
+        }
+        
+        .action-btn {
+            background: linear-gradient(to bottom, #3a5570, #2a3a5a);
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #4a6580;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(to bottom, #4a6580, #3a4a6a);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        
+        .action-btn.political {
+            background: linear-gradient(to bottom, #3a7055, #2a5a3a);
+        }
+        
+        .action-btn.military {
+            background: linear-gradient(to bottom, #703a3a, #5a2a2a);
+        }
+        
+        .action-btn.special {
+            background: linear-gradient(to bottom, #705a3a, #5a4a2a);
+        }
+        
+        .generals-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .general-card {
+            background: rgba(30, 45, 70, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #3a5570;
+            position: relative;
+        }
+        
+        .general-name {
+            font-size: 1.2rem;
+            color: #f0c050;
+            margin-bottom: 10px;
+        }
+        
+        .general-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .stat-item {
+            background: rgba(25, 40, 65, 0.7);
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .stat-value {
+            color: #70c0a0;
+            font-weight: bold;
+        }
+        
+        .loyalty-stars {
+            color: gold;
+            font-size: 1.2rem;
+            letter-spacing: -3px;
+            margin-top: 8px;
+        }
+        
+        .log-panel {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .log-container {
+            flex: 1;
+            background: rgba(10, 20, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #2a3a5a;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .log-entry {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a3a5a;
+        }
+        
+        .log-time {
+            color: #70a0c0;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .log-message {
+            color: #d0d0d0;
+        }
+        
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            flex-direction: column;
+        }
+        
+        .victory-message {
+            font-size: 3rem;
+            color: gold;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+        }
+        
+        .restart-btn {
+            background: linear-gradient(to bottom, #3a7055, #2a5a3a);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(50, 200, 100, 0.5);
+        }
+        
+        .section-title {
+            color: #f0c050;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3a506b;
+        }
+        
+        .mini-title {
+            color: #a0c0d0;
+            font-size: 1.1rem;
+            margin: 15px 0 10px;
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>东汉霸业：群雄逐鹿</h1>
+            <p class="subtitle">公元189年，董卓进京，天下大乱。汉室倾颓，群雄并起，这正是英雄建功立业之时！</p>
+        </header>
+        
+        <main class="game-area">
+            <div class="panel status-panel">
+                <div class="status-item">
+                    <div class="status-label">时间</div>
+                    <div class="status-value" id="time-display">189年1月</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">势力</div>
+                    <div class="status-value" id="power-name">刘备</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">资金</div>
+                    <div class="status-value" id="gold-display">5000金</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">粮草</div>
+                    <div class="status-value" id="food-display">10000石</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">兵力</div>
+                    <div class="status-value" id="soldiers-display">5000人</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">士气</div>
+                    <div class="status-value" id="morale-display">70/100</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">民心</div>
+                    <div class="status-value" id="loyalty-display">60/100</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">官员忠诚</div>
+                    <div class="status-value" id="officials-display">75/100</div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="section-title">领地控制</h2>
+                <div class="territory-section" id="territory-container">
+                    <!-- 领地信息将由JS生成 -->
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="section-title">内政指令</h2>
+                <div class="actions-panel">
+                    <button class="action-btn political" onclick="game.developAgriculture()">发展农业</button>
+                    <button class="action-btn political" onclick="game.developCommerce()">发展商业</button>
+                    <button class="action-btn military" onclick="game.recruitSoldiers()">征兵</button>
+                    <button class="action-btn military" onclick="game.trainArmy()">训练军队</button>
+                    <button class="action-btn political" onclick="game.findTalent()">寻访人才</button>
+                    <button class="action-btn political" onclick="game.appointOfficial()">任命县令</button>
+                </div>
+                
+                <h2 class="section-title">军事指令</h2>
+                <div class="actions-panel">
+                    <button class="action-btn military" onclick="game.viewNeighbors()">查看周边势力</button>
+                    <button class="action-btn military" onclick="game.startWar()">发动战争</button>
+                    <button class="action-btn political" onclick="game.diplomacy()">结盟/宣战</button>
+                    <button class="action-btn political" onclick="game.seduceGeneral()">策反敌将</button>
+                </div>
+                
+                <h2 class="section-title">特殊指令</h2>
+                <div class="actions-panel">
+                    <button class="action-btn special" onclick="game.declareEmperor()">称帝</button>
+                    <button class="action-btn" onclick="game.nextMonth()">结束本月</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="section-title">麾下将领</h2>
+                <div class="generals-panel" id="generals-container">
+                    <!-- 将领信息将由JS生成 -->
+                </div>
+            </div>
+        </main>
+        
+        <aside class="panel log-panel">
+            <h2 class="section-title">游戏日志</h2>
+            <div class="log-container" id="log-container">
+                <!-- 日志信息将由JS生成 -->
+            </div>
+        </aside>
+    </div>
+    
+    <div class="game-over" id="game-over-screen" style="display: none;">
+        <div class="victory-message" id="victory-message">一统天下！</div>
+        <button class="restart-btn" onclick="restartGame()">重新开始</button>
+    </div>
+
+    <script>
+        // 游戏核心对象
+        const game = {
+            // 游戏状态
+            year: 189,
+            month: 1,
+            playerName: "刘备",
+            playerTitle: "太守",
+            gold: 5000,
+            food: 10000,
+            soldiers: 5000,
+            morale: 70,
+            peopleLoyalty: 60,
+            officialsLoyalty: 75,
+            generals: [],
+            territory: {},
+            aiPowers: {},
+            gameOver: false,
+            hasEmperor: false,
+            imperialSeal: false,
+            
+            // 初始化游戏
+            init() {
+                // 初始化领地
+                this.territory = {
+                    "豫州": ["许昌"]
+                };
+                
+                // 初始化AI势力
+                this.aiPowers = {
+                    "曹操": {territory: {"兖州": ["陈留", "濮阳"]}, strength: 85},
+                    "袁绍": {territory: {"冀州": ["邺城", "平原"]}, strength: 90},
+                    "袁术": {territory: {"扬州": ["寿春"]}, strength: 70},
+                    "刘表": {territory: {"荆州": ["襄阳", "江陵"]}, strength: 75},
+                    "陶谦": {territory: {"徐州": ["下邳"]}, strength: 65},
+                };
+                
+                // 初始化将领
+                this.generals = [
+                    {name: "玩家", force: 80, lead: 85, intel: 90, loyalty: 100},
+                    {name: "关羽", force: 97, lead: 95, intel: 75, loyalty: 100},
+                    {name: "张飞", force: 96, lead: 85, intel: 45, loyalty: 100}
+                ];
+                
+                // 更新界面
+                this.updateUI();
+                this.log("公元189年，董卓进京，天下大乱。汉室倾颓，群雄并起，这正是英雄建功立业之时！");
+            },
+            
+            // 更新界面
+            updateUI() {
+                // 更新状态
+                document.getElementById('time-display').textContent = `${this.year}年${this.month}月`;
+                document.getElementById('power-name').textContent = this.playerName;
+                document.getElementById('gold-display').textContent = `${this.gold}金`;
+                document.getElementById('food-display').textContent = `${this.food}石`;
+                document.getElementById('soldiers-display').textContent = `${this.soldiers}人`;
+                document.getElementById('morale-display').textContent = `${this.morale}/100`;
+                document.getElementById('loyalty-display').textContent = `${this.peopleLoyalty}/100`;
+                document.getElementById('officials-display').textContent = `${this.officialsLoyalty}/100`;
+                
+                // 更新领地
+                const territoryContainer = document.getElementById('territory-container');
+                territoryContainer.innerHTML = '';
+                
+                for (const state in this.territory) {
+                    const territoryCard = document.createElement('div');
+                    territoryCard.className = 'territory-card';
+                    
+                    const stateName = document.createElement('div');
+                    stateName.className = 'territory-name';
+                    stateName.textContent = state;
+                    
+                    territoryCard.appendChild(stateName);
+                    
+                    this.territory[state].forEach(city => {
+                        const cityItem = document.createElement('div');
+                        cityItem.className = 'city-item';
+                        cityItem.textContent = city;
+                        territoryCard.appendChild(cityItem);
+                    });
+                    
+                    territoryContainer.appendChild(territoryCard);
+                }
+                
+                // 更新将领
+                const generalsContainer = document.getElementById('generals-container');
+                generalsContainer.innerHTML = '';
+                
+                this.generals.forEach(general => {
+                    const generalCard = document.createElement('div');
+                    generalCard.className = 'general-card';
+                    
+                    const generalName = document.createElement('div');
+                    generalName.className = 'general-name';
+                    generalName.textContent = general.name;
+                    
+                    const statsContainer = document.createElement('div');
+                    statsContainer.className = 'general-stats';
+                    
+                    const forceStat = document.createElement('div');
+                    forceStat.className = 'stat-item';
+                    forceStat.innerHTML = `武力: <span class="stat-value">${general.force}</span>`;
+                    
+                    const leadStat = document.createElement('div');
+                    leadStat.className = 'stat-item';
+                    leadStat.innerHTML = `统率: <span class="stat-value">${general.lead}</span>`;
+                    
+                    const intelStat = document.createElement('div');
+                    intelStat.className = 'stat-item';
+                    intelStat.innerHTML = `智谋: <span class="stat-value">${general.intel}</span>`;
+                    
+                    const loyaltyStat = document.createElement('div');
+                    loyaltyStat.className = 'stat-item';
+                    loyaltyStat.innerHTML = `忠诚: <span class="stat-value">${general.loyalty}</span>`;
+                    
+                    statsContainer.appendChild(forceStat);
+                    statsContainer.appendChild(leadStat);
+                    statsContainer.appendChild(intelStat);
+                    statsContainer.appendChild(loyaltyStat);
+                    
+                    // 忠诚度星星
+                    const stars = document.createElement('div');
+                    stars.className = 'loyalty-stars';
+                    stars.textContent = '★'.repeat(Math.floor(general.loyalty / 20));
+                    
+                    generalCard.appendChild(generalName);
+                    generalCard.appendChild(statsContainer);
+                    generalCard.appendChild(stars);
+                    
+                    generalsContainer.appendChild(generalCard);
+                });
+            },
+            
+            // 日志记录
+            log(message) {
+                const logContainer = document.getElementById('log-container');
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'log-time';
+                timeSpan.textContent = `[${this.year}年${this.month}月]`;
+                
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'log-message';
+                messageSpan.textContent = message;
+                
+                logEntry.appendChild(timeSpan);
+                logEntry.appendChild(messageSpan);
+                logContainer.appendChild(logEntry);
+                
+                // 滚动到底部
+                logContainer.scrollTop = logContainer.scrollHeight;
+            },
+            
+            // 游戏指令
+            developAgriculture() {
+                if (this.gold < 500) {
+                    this.log("资金不足！");
+                    return;
+                }
+                
+                this.gold -= 500;
+                const foodGain = Math.floor(Math.random() * 3000) + 2000;
+                this.food += foodGain;
+                this.peopleLoyalty = Math.min(100, this.peopleLoyalty + 2);
+                
+                this.log(`兴修水利，开垦农田，获得粮草${foodGain}石，民心+2`);
+                this.updateUI();
+            },
+            
+            developCommerce() {
+                const commerceGain = Math.floor(Math.random() * 500) + 300;
+                this.gold += commerceGain;
+                this.log(`发展商业，促进贸易，获得资金${commerceGain}金`);
+                this.updateUI();
+            },
+            
+            recruitSoldiers() {
+                if (this.food < 1000) {
+                    this.log("粮草不足！");
+                    return;
+                }
+                
+                const recruitNum = Math.floor(Math.random() * 1000) + 500;
+                this.soldiers += recruitNum;
+                this.food -= 1000;
+                this.peopleLoyalty = Math.max(0, this.peopleLoyalty - 5);
+                
+                this.log(`征募新兵${recruitNum}人，粮草-1000，民心-5`);
+                this.updateUI();
+            },
+            
+            trainArmy() {
+                if (this.gold < 300) {
+                    this.log("资金不足！");
+                    return;
+                }
+                
+                this.gold -= 300;
+                const moraleGain = Math.floor(Math.random() * 10) + 5;
+                this.morale = Math.min(100, this.morale + moraleGain);
+                
+                this.log(`训练军队，士气+${moraleGain}`);
+                this.updateUI();
+            },
+            
+            findTalent() {
+                if (this.gold < 200) {
+                    this.log("资金不足！");
+                    return;
+                }
+                
+                this.gold -= 200;
+                
+                const talents = [
+                    {name: "赵云", force: 95, lead: 90, intel: 80, loyalty: 100},
+                    {name: "荀彧", force: 30, lead: 60, intel: 98, loyalty: 85},
+                    {name: "郭嘉", force: 35, lead: 70, intel: 99, loyalty: 90},
+                    {name: "典韦", force: 98, lead: 80, intel: 50, loyalty: 90}
+                ];
+                
+                if (Math.random() < 0.6 && talents.length > 0) {
+                    const talentIndex = Math.floor(Math.random() * talents.length);
+                    const newTalent = talents[talentIndex];
+                    this.generals.push(newTalent);
+                    this.log(`寻得人才：${newTalent.name}！`);
+                } else {
+                    this.log("寻访未果，下月继续努力");
+                }
+                
+                this.updateUI();
+            },
+            
+            appointOfficial() {
+                if (this.gold < 100) {
+                    this.log("资金不足！");
+                    return;
+                }
+                
+                this.gold -= 100;
+                const loyaltyGain = Math.floor(Math.random() * 5) + 3;
+                this.officialsLoyalty = Math.min(100, this.officialsLoyalty + loyaltyGain);
+                
+                this.log(`任命地方官员，官员忠诚+${loyaltyGain}`);
+                this.updateUI();
+            },
+            
+            viewNeighbors() {
+                this.log("【周边势力】");
+                for (const power in this.aiPowers) {
+                    const territories = [];
+                    for (const state in this.aiPowers[power].territory) {
+                        territories.push(`${state}(${this.aiPowers[power].territory[state].length}城)`);
+                    }
+                    this.log(`${power}：${territories.join('、')} 实力：${this.aiPowers[power].strength}/100`);
+                }
+            },
+            
+            startWar() {
+                const powers = Object.keys(this.aiPowers);
+                if (powers.length === 0) {
+                    this.log("没有可攻击的目标");
+                    return;
+                }
+                
+                const target = powers[Math.floor(Math.random() * powers.length)];
+                this.warSimulation(target);
+            },
+            
+            warSimulation(target) {
+                const aiData = this.aiPowers[target];
+                const aiStrength = aiData.strength;
+                
+                // 计算玩家实力
+                let playerStrength = Math.floor(this.soldiers / 100) + Math.floor(this.morale / 2);
+                for (const general of this.generals) {
+                    playerStrength += Math.floor(general.lead / 10);
+                }
+                
+                this.log(`\n准备进攻${target}！`);
+                this.log(`我军实力：${playerStrength} | 敌军实力：${aiStrength}`);
+                
+                // 战斗结果计算
+                let result;
+                if (playerStrength > aiStrength * 1.2) {
+                    result = "大胜";
+                } else if (playerStrength > aiStrength) {
+                    result = "胜利";
+                } else if (playerStrength > aiStrength * 0.8) {
+                    result = "平局";
+                } else {
+                    result = "失败";
+                }
+                
+                // 战斗描述
+                const battleDescriptions = {
+                    "大胜": ["势如破竹", "敌军望风而逃"],
+                    "胜利": ["激战之后取得优势", "敌军被迫撤退"],
+                    "平局": ["两军相持不下", "各自退兵"],
+                    "失败": ["战事不利", "被迫撤军"]
+                };
+                
+                const desc = battleDescriptions[result][Math.floor(Math.random() * battleDescriptions[result].length)];
+                this.log(`战况：${desc}，${result}！`);
+                
+                // 战斗结果处理
+                if (result === "大胜" || result === "胜利") {
+                    // 夺取领地
+                    const states = Object.keys(aiData.territory);
+                    const capturedState = states[Math.floor(Math.random() * states.length)];
+                    const cities = aiData.territory[capturedState];
+                    const capturedCity = cities[Math.floor(Math.random() * cities.length)];
+                    
+                    // 更新领地
+                    if (!this.territory[capturedState]) {
+                        this.territory[capturedState] = [];
+                    }
+                    this.territory[capturedState].push(capturedCity);
+                    aiData.territory[capturedState] = aiData.territory[capturedState].filter(city => city !== capturedCity);
+                    
+                    // 清理空州
+                    if (aiData.territory[capturedState].length === 0) {
+                        delete aiData.territory[capturedState];
+                    }
+                    
+                    // 获取战利品
+                    const lootGold = Math.floor(Math.random() * 1200) + 800;
+                    const lootFood = Math.floor(Math.random() * 3000) + 2000;
+                    this.gold += lootGold;
+                    this.food += lootFood;
+                    this.morale += 10;
+                    
+                    this.log(`占领${capturedState}的${capturedCity}！缴获黄金${lootGold}，粮草${lootFood}`);
+                    
+                    // 检查是否消灭势力
+                    if (Object.keys(aiData.territory).length === 0) {
+                        this.log(`☠️ ${target}势力灭亡！`);
+                        delete this.aiPowers[target];
+                        
+                        // 有几率获得玉玺
+                        if (target === "袁术" && !this.imperialSeal) {
+                            this.imperialSeal = true;
+                            this.log("✨ 获得传国玉玺！");
+                        }
+                    }
+                } else {
+                    // 失败处理
+                    const soldierLoss = Math.floor(Math.random() * 1500) + 500;
+                    this.soldiers = Math.max(0, this.soldiers - soldierLoss);
+                    this.morale = Math.max(0, this.morale - 15);
+                    this.gold = Math.max(0, this.gold - 300);
+                    
+                    this.log(`损失兵力${soldierLoss}人，士气-15，资金-300`);
+                }
+                
+                this.updateUI();
+            },
+            
+            diplomacy() {
+                const powers = Object.keys(this.aiPowers);
+                if (powers.length === 0) {
+                    this.log("没有可外交的对象");
+                    return;
+                }
+                
+                const target = powers[Math.floor(Math.random() * powers.length)];
+                
+                // 随机外交结果
+                if (Math.random() < 0.4) {
+                    this.log(`与${target}结盟成功！`);
+                    this.aiPowers[target].strength -= 10;
+                } else {
+                    this.log(`${target}拒绝了你的提议`);
+                    // 可能引发战争
+                    if (Math.random() < 0.3) {
+                        this.log(`${target}认为这是侮辱，向你宣战！`);
+                        this.warSimulation(target);
+                    }
+                }
+            },
+            
+            seduceGeneral() {
+                const powers = Object.keys(this.aiPowers);
+                if (powers.length === 0) {
+                    this.log("没有可策反的目标");
+                    return;
+                }
+                
+                if (this.gold < 1000) {
+                    this.log("资金不足！");
+                    return;
+                }
+                
+                this.gold -= 1000;
+                const target = powers[Math.floor(Math.random() * powers.length)];
+                
+                if (Math.random() < 0.3) {
+                    const aiGenerals = ["张郃", "高览", "张辽", "徐晃", "甘宁"];
+                    const generalName = aiGenerals[Math.floor(Math.random() * aiGenerals.length)];
+                    
+                    const newGeneral = {
+                        name: generalName,
+                        force: Math.floor(Math.random() * 15) + 80,
+                        lead: Math.floor(Math.random() * 15) + 75,
+                        intel: Math.floor(Math.random() * 25) + 60,
+                        loyalty: 80
+                    };
+                    
+                    this.generals.push(newGeneral);
+                    this.log(`成功策反${target}麾下的${generalName}！`);
+                } else {
+                    this.log("策反失败，资金损失");
+                }
+                
+                this.updateUI();
+            },
+            
+            declareEmperor() {
+                // 称帝条件：拥有玉玺且控制三州以上
+                const stateCount = Object.keys(this.territory).length;
+                
+                if (!this.imperialSeal) {
+                    this.log("称帝需传国玉玺！");
+                    return;
+                }
+                
+                if (stateCount < 3) {
+                    this.log("需控制至少三州之地！");
+                    return;
+                }
+                
+                this.playerTitle = "皇帝";
+                this.hasEmperor = true;
+                
+                this.log("=".repeat(50));
+                this.log("🔥 昭告天下，登基称帝！ 🔥");
+                this.log(`朕即天命，定国号为【${this.playerName}】`);
+                this.log("文武百官朝贺，万民景从！");
+                this.log("=".repeat(50));
+                
+                // 称帝加成
+                this.peopleLoyalty = Math.min(100, this.peopleLoyalty + 20);
+                this.officialsLoyalty = Math.min(100, this.officialsLoyalty + 25);
+                this.morale = 100;
+                
+                this.gameOver = true;
+                this.showGameOver("君临天下！", `${this.playerName}受命于天，既寿永昌，开创崭新王朝`);
+                
+                this.updateUI();
+            },
+            
+            // 时间推进
+            nextMonth() {
+                this.month++;
+                if (this.month > 12) {
+                    this.month = 1;
+                    this.year++;
+                    this.yearlyEvents();
+                }
+                
+                // 每月自动收入
+                let cityCount = 0;
+                for (const state in this.territory) {
+                    cityCount += this.territory[state].length;
+                }
+                
+                this.gold += cityCount * 150;
+                this.food += cityCount * 300;
+                
+                // 每月衰减
+                if (!this.hasEmperor) {
+                    this.peopleLoyalty = Math.max(0, this.peopleLoyalty - 1);
+                }
+                this.officialsLoyalty = Math.max(0, this.officialsLoyalty - 1);
+                
+                this.log("时间流逝...");
+                this.checkVictory();
+                this.updateUI();
+            },
+            
+            // 年度事件
+            yearlyEvents() {
+                const events = [
+                    {
+                        name: "丰收之年，粮草增加",
+                        action: () => {
+                            const foodGain = Math.floor(Math.random() * 3000) + 2000;
+                            this.food += foodGain;
+                            this.log(`★ ${this.year}年：丰收之年，粮草增加${foodGain}石`);
+                        }
+                    },
+                    {
+                        name: "瘟疫流行，人口减少",
+                        action: () => {
+                            this.peopleLoyalty = Math.max(0, this.peopleLoyalty - 10);
+                            this.log(`★ ${this.year}年：瘟疫流行，民心-10`);
+                        }
+                    },
+                    {
+                        name: "发现银矿，资金增加",
+                        action: () => {
+                            const goldGain = Math.floor(Math.random() * 1000) + 500;
+                            this.gold += goldGain;
+                            this.log(`★ ${this.year}年：发现银矿，资金增加${goldGain}金`);
+                        }
+                    },
+                    {
+                        name: "异族入侵，边境告急",
+                        action: () => {
+                            this.log(`★ ${this.year}年：异族入侵，边境告急`);
+                            if (Object.keys(this.aiPowers).length > 0) {
+                                const attacker = Object.keys(this.aiPowers)[Math.floor(Math.random() * Object.keys(this.aiPowers).length)];
+                                this.log(`${attacker}乘机进犯！`);
+                                this.warSimulation(attacker);
+                            }
+                        }
+                    },
+                    {
+                        name: "祥瑞现世，民心大增",
+                        action: () => {
+                            this.peopleLoyalty = Math.min(100, this.peopleLoyalty + 15);
+                            this.log(`★ ${this.year}年：祥瑞现世，民心+15`);
+                        }
+                    },
+                    {
+                        name: "科举取士，人才来投",
+                        action: () => {
+                            this.log(`★ ${this.year}年：科举取士，人才来投`);
+                            this.findTalent();
+                        }
+                    }
+                ];
+                
+                const event = events[Math.floor(Math.random() * events.length)];
+                event.action();
+            },
+            
+            // 检查胜利条件
+            checkVictory() {
+                // 统一胜利：消灭所有其他势力
+                if (Object.keys(this.aiPowers).length === 0) {
+                    this.gameOver = true;
+                    this.showGameOver("一统天下！", `历经${this.year-189}年征战，${this.playerName}荡平群雄，四海归一`);
+                }
+                
+                // 失败条件：民心或忠诚过低
+                if (this.peopleLoyalty <= 20 || this.officialsLoyalty <= 20) {
+                    this.gameOver = true;
+                    this.showGameOver("众叛亲离！", "民怨沸腾，部将叛逃，你的统治土崩瓦解");
+                }
+                
+                // 时间结束（游戏时限30年）
+                if (this.year >= 219) {
+                    this.gameOver = true;
+                    this.showGameOver("时代终结", "三十载风云变幻，英雄迟暮，霸业未成");
+                }
+            },
+            
+            // 显示游戏结束画面
+            showGameOver(title, message) {
+                document.getElementById('victory-message').textContent = title;
+                const logContainer = document.getElementById('log-container');
+                logContainer.innerHTML += `<div class="log-entry"><span class="log-time">[系统]</span><span class="log-message">${message}</span></div>`;
+                document.getElementById('game-over-screen').style.display = 'flex';
+            }
+        };
+        
+        // 重启游戏
+        function restartGame() {
+            document.getElementById('game-over-screen').style.display = 'none';
+            document.getElementById('log-container').innerHTML = '';
+            game.init();
+        }
+        
+        // 启动游戏
+        window.onload = function() {
+            // 获取玩家名称
+            const playerName = prompt("请为你的势力命名：", "刘备") || "刘备";
+            game.playerName = playerName;
+            
+            // 初始化游戏
+            game.init();
+        };
+    </script>
+</body>
+</html>
